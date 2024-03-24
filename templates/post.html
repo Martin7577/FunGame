@@ -1,0 +1,23 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Post
+{% endblock title %}
+
+{% block content %}
+
+<h3>{{ post.header}}</h3>
+<h5>Дата публикации: {{ post.time_in|date:'d M.Y'}}</h5>
+<a href="/posts/">Вернуться ко всем постам</a>
+<table>
+    <tr>
+        <td>Содержание</td>
+        <td>Автор</td>
+    </tr>
+    <tr>
+        <td>{{ post.text}}</td>
+        <td>{{ post.post_author.user }}</td>
+    </tr>
+    </table>
+{% endblock content %}
