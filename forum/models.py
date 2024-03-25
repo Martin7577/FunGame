@@ -52,11 +52,11 @@ class PostCategory(models.Model):
         return f'{self.post.header} {self.category.name}'
 
 class Comment(models.Model):
-    text = models.TextField()
-    date_time = models.DateTimeField(auto_now_add=True)
+    content = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.text
+        return self.content
 

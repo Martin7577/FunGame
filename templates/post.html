@@ -9,15 +9,34 @@ Post
 
 <h3>{{ post.header}}</h3>
 <h5>Дата публикации: {{ post.time_in|date:'d M.Y'}}</h5>
-<a href="/posts/">Вернуться ко всем постам</a>
+<style>
+   table {
+    width: 1000px; /* Ширина таблицы */
+    margin: auto; /* Выравниваем таблицу по центру */
+   }
+   td {
+    border: 1px ; /* Рамка вокруг таблицы */
+    text-align: center; /* Выравниваем текст по центру ячейки */
+   }
+  </style>
 <table>
-    <tr>
-        <td>Содержание</td>
-        <td>Автор</td>
-    </tr>
-    <tr>
-        <td>{{ post.text}}</td>
-        <td>{{ post.post_author.user }}</td>
-    </tr>
+            <tr>
+               <td>{{ post.text }}</td>
+            </tr>
+            <tr>
+                <td> <img width="500" src="{{post.image.url}}" alt=""> </td>
+           </tr>
     </table>
-{% endblock content %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+
+    {% csrf_token %}
+    {{comment_form.as_p}}
+    <p><input type="file" name="file_upload"></p>
+    <p><button type="submit">Отправить</button></p>
+
+</form>
+
+
+
+{% endblock %}

@@ -1,10 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'flatpages/default.html' %}
 
-</body>
-</html>
+
+
+{% block title %}
+Posts
+{% endblock title %}
+
+
+{% block content %}
+<h1>Всего постов: {{ posts|length }}</h1>
+
+
+   {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+   <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+   </form>
+
+   <hr>
+    {% if posts %}
+
+
+            {% for post in posts %}
+<style>
+   table {
+    width: 1000px; /* Ширина таблицы */
+    margin: auto; /* Выравниваем таблицу по центру */
+   }
+   td {
+    border: 1px ; /* Рамка вокруг таблицы */
+    text-align: center; /* Выравниваем текст по центру ячейки */
+   }
+  </style>
+<div>
+
+  <table border="1">
+            <tr>
+               <td> {{ post.header}} {{ post.time_in|date:'d M.Y'}}</td>
+            </tr>
+            <tr>
+               <td>{{ post.post_author.user }}</td>
+            </tr>
+
+            <tr>
+               <td>{{ post.text }}</td>
+            </tr>
+            <tr>
+                <td> <img width="500" src="{{post.image.url}}" alt=""> </td>
+           </tr>
+        </table>
+        </div>
+           {% endfor %}
+
+    {% else %}
+        <h2>Постов нет!</h2>
+    {% endif %}
+{% endblock %}

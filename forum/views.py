@@ -1,7 +1,13 @@
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .forms import PostForm, UploadFileForm
+from requests import post
+from hitcount.views import HitCountDetailView
+
+from .filters import PostFilter
+from .forms import *
 from django.urls import reverse_lazy
 # from .tasks import send_mails, send_email_week
 
@@ -34,27 +40,67 @@ class PostDetail(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
     queryset = Post.objects.all()
-    def get_object(self, *args, **kwargs):
-        obj = cache.get(f'product-{self.kwargs["pk"]}', None)
-        if not obj:
-            obj = super().get_object(queryset=self.queryset)
-            cache.set(f'product-{self.kwargs["pk"]}', obj)
-        return obj
+
+def post_detailview(request, id):
+
+    if request.method == 'POST':
+        cf = CommentForm(request.POST or None)
+        if cf.is_valid():
+            content = request.POST.get('content')
+            comment = Comment.objects.create(post=post, user=request.user, content=content)
+            comment.save()
+            return redirect(post.get_absolute_url())
+        else:
+            cf = CommentForm()
+
+        context = {
+            'comment_form': cf,
+        }
+        return render(request, 'post.html', context)
+@login_required
+def post_detail(request,pk):
+    post = Post.objects.get(id=pk)
+    ied = pk
+    comments = Comment.objects.filter(post=post).order_by("-pk")
 
 
+    if request.method == 'POST':
+        cf=CommentForm(request.POST or None)
+        if cf.is_valid():
+            content=request.POST.get('content')
+            comment=Comment.objects.create(post_author=post,user=request.user,content=content)
+            comment.save()
+            return redirect(post.get_absolute_url())
+    else:
+        cf=CommentForm()
+
+    context={
+    'title': 'Post Details',
+    'comments':comments,
+    'ied':ied,
+    'object':post,
+    'comment_form':cf
+    }
+    return render(request,'post.html',context)
 
 class PostSearch(ListView):
     model = Post
     ordering = 'header'
     template_name = 'search.html'
-    context_object_name = 'news'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset)
+        # Возвращаем из функции отфильтрованный список товаров
+        return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         return context
 
-class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель товаров

@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends 'flatpages/default.html' %}
 
 {% block content %}
 <h2> Регистрация </h2>
@@ -6,5 +6,7 @@
 {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Продолжить">
+    <button> <a href="/sign/login"> Войти </a></button>
+
 </form>
 {% endblock %}

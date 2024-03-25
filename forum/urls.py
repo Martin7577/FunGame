@@ -1,6 +1,6 @@
 from django.urls import path, include
 # Импортируем созданное нами представление
-from .views import PostList, PostDetail, PostSearch, PostCreate, PostUpdate, PostDelete, CategoryListView
+from .views import PostList, PostSearch, PostCreate, PostUpdate, PostDelete, CategoryListView, PostDetail
 from django.views.decorators.cache import cache_page
 
 

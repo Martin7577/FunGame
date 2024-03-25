@@ -15,9 +15,7 @@ Posts
 
 
 </form>
-<a href="/posts/search">{% trans "Поиск объявлений" %}</a>
-<a href="/posts/create">{% trans "Создать объявление" %}</a>
-<a href="/">{% trans "Профиль" %}</a>
+
 {% if posts %}
       <h1>{% trans "Все объявления" %}: {{ posts|length }}</h1>
    {% else %}
@@ -65,12 +63,16 @@ Posts
             <tr>
                 <td> <img width="500" src="{{post.image.url}}" alt=""> </td>
            </tr>
+            <tr>
+               <td>{{ post.text }}</td>
+            </tr>
+
         </table>
         </div>
            {% endfor %}
 
     {% else %}
-        <h2>Новостей нет!</h2>
+        <h2>Постов нет!</h2>
     {% endif %}
 
 {# Добавляем пагинацию на страницу #}
