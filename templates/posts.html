@@ -51,7 +51,7 @@ Posts
 
   <table border="1">
             <tr>
-               <td> {{ post.header}} {{ post.time_in|date:'d M.Y'}}</td>
+                <td> <a href="{{ post.get_absolute_url }}">{{ post.header}} {{ post.time_in|date:'d M.Y'}}</a></td>
             </tr>
             <tr>
                <td>{{ post.post_author.user }}</td>

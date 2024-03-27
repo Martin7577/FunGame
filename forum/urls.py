@@ -1,6 +1,10 @@
 from django.urls import path, include
+
+from . import views
 # Импортируем созданное нами представление
-from .views import PostList, PostSearch, PostCreate, PostUpdate, PostDelete, CategoryListView, PostDetail
+from .views import (PostList, PostSearch, PostCreate, PostUpdate, PostDelete, CategoryListView,
+                    # PostDetail
+                    )
 from django.views.decorators.cache import cache_page
 
 
@@ -8,7 +12,9 @@ from django.views.decorators.cache import cache_page
 
 urlpatterns = [
    path('', cache_page(5)(PostList.as_view()), name='post_list'),
-   path('<int:pk>', PostDetail.as_view(), name='post_detail'),
+   # path('<int:pk>', PostDetail.as_view(), name='post_detail'),
+   path('<int:id>/', views.post_detail, name='post_detail'),
+   path('<int:pk>/comment', views.post_comment, name='post_comment'),
 
    path('search/', PostSearch.as_view(), name='search'),
 

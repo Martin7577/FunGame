@@ -1,0 +1,11 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %} Add a comment {% endblock %}
+
+{% block content %}
+    {% if comment %}
+        <h2>your comment has been added</h2>
+        <p><a href="{{post.get_absolute_url}}">beck to the post</a> </p>
+    {% else %}
+        {% include "comment_form.html" %}
+

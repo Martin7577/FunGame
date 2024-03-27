@@ -1,19 +1,29 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from requests import post
-from hitcount.views import HitCountDetailView
 
 from .filters import PostFilter
 from .forms import *
+from .models import *
 from django.urls import reverse_lazy
 # from .tasks import send_mails, send_email_week
-
-
 # from .serializers import *
-from .models import *
+
+@require_POST
+def post_comment(request, id):
+    post = get_object_or_404(Post, id=id, status=Post.Status.PUBLISHED)
+    comment = None
+    form = CommentForm(data=request.Post)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+    return render(request, 'post.html',
+                  {'post': post, 'form': form, 'comment': comment})
 
 
 def handle_uploaded_file(f):
@@ -36,52 +46,17 @@ class PostList(ListView):
     context_object_name = 'posts'
     paginate_by = 10
 
-class PostDetail(DetailView):
-    template_name = 'post.html'
-    context_object_name = 'post'
-    queryset = Post.objects.all()
+# class PostDetail(DetailView):
+#     template_name = 'post.html'
+#     context_object_name = 'post'
+#     queryset = Post.objects.all()
+def post_detail(request, id):
+    post = get_object_or_404(Post,
+                             id=id)
+    return render(request,
+                  'post.html',
+                  {'post': post})
 
-def post_detailview(request, id):
-
-    if request.method == 'POST':
-        cf = CommentForm(request.POST or None)
-        if cf.is_valid():
-            content = request.POST.get('content')
-            comment = Comment.objects.create(post=post, user=request.user, content=content)
-            comment.save()
-            return redirect(post.get_absolute_url())
-        else:
-            cf = CommentForm()
-
-        context = {
-            'comment_form': cf,
-        }
-        return render(request, 'post.html', context)
-@login_required
-def post_detail(request,pk):
-    post = Post.objects.get(id=pk)
-    ied = pk
-    comments = Comment.objects.filter(post=post).order_by("-pk")
-
-
-    if request.method == 'POST':
-        cf=CommentForm(request.POST or None)
-        if cf.is_valid():
-            content=request.POST.get('content')
-            comment=Comment.objects.create(post_author=post,user=request.user,content=content)
-            comment.save()
-            return redirect(post.get_absolute_url())
-    else:
-        cf=CommentForm()
-
-    context={
-    'title': 'Post Details',
-    'comments':comments,
-    'ied':ied,
-    'object':post,
-    'comment_form':cf
-    }
-    return render(request,'post.html',context)
 
 class PostSearch(ListView):
     model = Post

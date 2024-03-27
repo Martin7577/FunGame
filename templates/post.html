@@ -1,42 +1,10 @@
-{% extends 'flatpages/default.html' %}
+{% extends 'flatpages/base.html' %}
 
 
-{% block title %}
-Post
-{% endblock title %}
-
+{% block title %}{{ post.header }}{% endblock %}
 {% block content %}
-
-<h3>{{ post.header}}</h3>
-<h5>Дата публикации: {{ post.time_in|date:'d M.Y'}}</h5>
-<style>
-   table {
-    width: 1000px; /* Ширина таблицы */
-    margin: auto; /* Выравниваем таблицу по центру */
-   }
-   td {
-    border: 1px ; /* Рамка вокруг таблицы */
-    text-align: center; /* Выравниваем текст по центру ячейки */
-   }
-  </style>
-<table>
-            <tr>
-               <td>{{ post.text }}</td>
-            </tr>
-            <tr>
-                <td> <img width="500" src="{{post.image.url}}" alt=""> </td>
-           </tr>
-    </table>
-
-<form action="" method="POST" enctype="multipart/form-data">
-
-    {% csrf_token %}
-    {{comment_form.as_p}}
-    <p><input type="file" name="file_upload"></p>
-    <p><button type="submit">Отправить</button></p>
-
-</form>
-
-
-
-{% endblock %}
+<h1>{{ post.header }}</h1> <p class="date">
+Published {{ post.publish }} by {{ post.post_author }}
+</p>
+{{ post.text|linebreaks }} {% endblock %}
+<img width="500" src="{{post.image.url}}" alt="">
