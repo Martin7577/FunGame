@@ -37,39 +37,15 @@ Posts
 
 <!--            </tr>-->
             {% for post in posts %}
-<style>
-   table {
-    width: 1000px; /* Ширина таблицы */
-    margin: auto; /* Выравниваем таблицу по центру */
-   }
-   td {
-    border: 1px ; /* Рамка вокруг таблицы */
-    text-align: center; /* Выравниваем текст по центру ячейки */
-   }
-  </style>
-<div>
-
-  <table border="1">
-            <tr>
-                <td> <a href="{{ post.get_absolute_url }}">{{ post.header}} {{ post.time_in|date:'d M.Y'}}</a></td>
-            </tr>
-            <tr>
-               <td>{{ post.post_author.user }}</td>
-            </tr>
-
-            <tr>
-               <td>{{ post.text }}</td>
-            </tr>
-            <tr>
-                <td> <img width="500" src="{{post.image.url}}" alt=""> </td>
-           </tr>
-            <tr>
-               <td>{{ post.text }}</td>
-            </tr>
-
-        </table>
-        </div>
-           {% endfor %}
+<h2>
+<a href="{{ post.get_absolute_url }}">{{ post.header}} {{ post.time_in|date:'d M.Y'}}</a>
+</h2>
+<p class="date">
+Published {{ post.publish }} by {{ post.post_author }}
+</p>
+{{ post.text|truncatewords:30|linebreaks }}
+<p><img width="500" src="{{post.image.url}}" alt=""></p>
+{% endfor %}
 
     {% else %}
         <h2>Постов нет!</h2>

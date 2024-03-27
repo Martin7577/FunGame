@@ -14,7 +14,7 @@ urlpatterns = [
    path('', cache_page(5)(PostList.as_view()), name='post_list'),
    # path('<int:pk>', PostDetail.as_view(), name='post_detail'),
    path('<int:id>/', views.post_detail, name='post_detail'),
-   path('<int:pk>/comment', views.post_comment, name='post_comment'),
+   path('<int:post_id>/comment/', views.post_comment, name='post_comment'),
 
    path('search/', PostSearch.as_view(), name='search'),
 

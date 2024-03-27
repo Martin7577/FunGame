@@ -1,10 +1,41 @@
-{% extends 'flatpages/base.html' %}
+{% extends 'flatpages/default.html' %}
 
 
 {% block title %}{{ post.header }}{% endblock %}
+
+
+
 {% block content %}
 <h1>{{ post.header }}</h1> <p class="date">
 Published {{ post.publish }} by {{ post.post_author }}
 </p>
-{{ post.text|linebreaks }} {% endblock %}
-<img width="500" src="{{post.image.url}}" alt="">
+{{ post.text|linebreaks }}
+<p><img width="500" src="{{post.image.url}}" alt=""></p>
+
+
+
+{% include "comment_form.html" %}
+
+
+{% with comments.count as total_comments %}
+<h2>
+{{ total_comments }} comment{{ total_comments|pluralize }}
+</h2>
+{% endwith %}
+
+
+
+{% for comment in comments %} <div class="comment">
+<p class="info">
+Comment {{ forloop.counter }} by {{ comment.user }} {{ comment.date }}
+</p>
+{{ comment.content|linebreaks }}
+</div>
+{% empty %}
+<p>There are no comments.</p>
+{% endfor %}
+
+
+
+
+{% endblock %}

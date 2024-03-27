@@ -25,6 +25,10 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = 'DF', 'Draft'
+        PUBLISHED = 'PB', 'Published'
+
     time_in = models.DateTimeField(auto_now_add=True)
     publish = models.DateTimeField(default=timezone.now)
     header = models.CharField(max_length=255)
@@ -32,6 +36,8 @@ class Post(models.Model):
     category = models.ManyToManyField(Category, through='PostCategory')
     post_author = models.ForeignKey(Author, on_delete=models.CASCADE)
     image = models.ImageField(blank=True, upload_to='images', null=True)
+    status = models.CharField(max_length=2,
+                              choices=Status.choices, default=Status.DRAFT)
 
     class Meta:
         ordering = ['-publish']
@@ -50,7 +56,7 @@ class Post(models.Model):
         return self.header
 
     def get_absolute_url(self):
-        return reverse('forum:post_detail',
+        return reverse('post_detail',
                        args=[self.id])
 
 class PostCategory(models.Model):
@@ -65,7 +71,7 @@ class Comment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    active = models.BooleanField(default=True)
     class Meta:
         ordering = ['date']
         indexes = [
@@ -73,5 +79,5 @@ class Comment(models.Model):
                    ]
 
     def __str__(self):
-        return f'comment by {Comment.user} on {Comment.post}'
+        return f'comment by {self.user} on {self.post}'
 
