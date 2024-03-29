@@ -47,10 +47,7 @@ def post_comment(request, post_id):
 
 
 
-def handle_uploaded_file(f):
-    with open(f"uploads/{f.name}", "wb+") as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+
 
 
 
@@ -111,14 +108,7 @@ class PostCreate(LoginRequiredMixin, CreateView):
     permission_required = ('rest.add_post',)
 
 
-    # def form_valid(self, form):
-    #     post = form.save(commit=False)
-    #     if self.request.path == '/news/articles/create/':
-    #         post.type = 'A'
-    #     post.save()
-    #     send_mails.delay(post.pk)
-    #     send_email_week.delay()
-    #     return super().form_valid(form)
+
 
 
 class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
@@ -133,34 +123,6 @@ class CategoryListView(ListView):
     model = Post
     template_name = 'category_list.html'
     context_object_name = 'category_news_list'
-
-    # def get_queryset(self):
-    #     self.category = get_object_or_404(Category, id=self.kwargs['pk'])
-    #     queryset = Post.objects.filter(category=self.category).order_by('-time_in')
-    #     self.filterset = PostFilter(self.request.GET, queryset)
-    #     return queryset
-
-
-class ResponseList(ListView):
-    model = Comment
-    template_name = 'response.html'
-    context_object_name = 'respons'
-
-def post(request):
-    context = {
-        'posts': Post.objects.filter(user=request.user)
-    }
-    return render(request, 'response.html', context)
-def response(request):
-
-    # if Comment.post.user == Post.user:
-    #     return ...
-
-    context = {
-        'responses': Comment.objects.filter(user=request.user)
-    }
-
-    return render(request, 'response.html', context)
 
 def user_posts_comments(request):
     user = request.user
@@ -182,6 +144,3 @@ def approve_comment(request, comment_id):
         comment.save()
         # Redirect back to the same page after approving the comment
         return redirect('user_posts_comments')
-    else:
-        # Add error handling or redirect to a different page
-        pass

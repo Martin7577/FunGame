@@ -8,13 +8,6 @@ from django.utils import timezone
 
 
 
-# class Author(models.Model):
-#     user = models.OneToOneField(User, on_delete = models.CASCADE)
-#     # ratings = models.IntegerField(default = 0)
-#
-#     def __str__(self):
-#         return self.user.username
-
 
 class Category(models.Model):
     name = models.CharField(max_length=255,help_text=('category name'), unique=True)
@@ -35,7 +28,6 @@ class Post(models.Model):
     text = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ManyToManyField(Category, through='PostCategory')
-    # post_author = models.ForeignKey(Author, on_delete=models.CASCADE)
     image = models.ImageField(blank=True, upload_to='images', null=True)
     status = models.CharField(max_length=2,
                               choices=Status.choices, default=Status.PUBLISHED)
