@@ -7,7 +7,7 @@
 
 {% block content %}
 <h1>{{ post.header }}</h1> <p class="date">
-Published {{ post.publish }} by {{ post.post_author }}
+{{ post.user.username }} {{ post.publish }}
 </p>
 {{ post.text|linebreaks }}
 <p><img width="500" src="{{post.image.url}}" alt=""></p>
@@ -19,7 +19,7 @@ Published {{ post.publish }} by {{ post.post_author }}
 
 {% with comments.count as total_comments %}
 <h2>
-{{ total_comments }} comment{{ total_comments|pluralize }}
+{{ total_comments }} response{{ total_comments|pluralize }}
 </h2>
 {% endwith %}
 
@@ -27,12 +27,12 @@ Published {{ post.publish }} by {{ post.post_author }}
 
 {% for comment in comments %} <div class="comment">
 <p class="info">
-Comment {{ forloop.counter }} by {{ comment.user }} {{ comment.date }}
+Отклик {{ forloop.counter }} от {{ comment.user }} {{ comment.date }}
 </p>
 {{ comment.content|linebreaks }}
 </div>
 {% empty %}
-<p>There are no comments.</p>
+<p>Откликов нет.</p>
 {% endfor %}
 
 

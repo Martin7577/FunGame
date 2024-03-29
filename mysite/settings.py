@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',
     'django.contrib.flatpages',
+    # 'forum.apps.AccountsConfig',
 
     'forum',
     'mysite',
@@ -158,6 +159,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
+
+
+ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
 
 
 ACCOUNT_EMAIL_REQUIRED = True

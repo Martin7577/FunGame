@@ -1,5 +1,4 @@
 {% extends 'flatpages/default.html' %}
-        {% load static %}
 
 
 {% load i18n %}
@@ -21,29 +20,20 @@ Posts
    {% else %}
        <!-- Если товаров нет, говорим, что товаров нет ;) -->
        <h2>Объявлений нет!</h2>
-   {% endif %}
+{% endif %}
 
 
 <hr>
     {% if posts %}
 
-<!--            <tr>-->
-<!--                <td>{% trans "Заголовок" %}</td>-->
-<!--                <td>{% trans "Дата публикации" %}</td>-->
-<!--                <td>{% trans "Текст" %}</td>-->
-<!--                <td>{% trans "Автор" %}</td>-->
-<!--                <td>{% trans "Категория" %}</td>-->
-
-
-<!--            </tr>-->
             {% for post in posts %}
 <h2>
-<a href="{{ post.get_absolute_url }}">{{ post.header}} {{ post.time_in|date:'d M.Y'}}</a>
+<a href="{{ post.get_absolute_url }}">{{ post.header}} </a>
 </h2>
 <p class="date">
-Published {{ post.publish }} by {{ post.post_author }}
+{{ post.user.username }} {{ post.publish }}
 </p>
-{{ post.text|truncatewords:30|linebreaks }}
+{{ post.text|truncatewords:200|linebreaks }}
 <p><img width="500" src="{{post.image.url}}" alt=""></p>
 {% endfor %}
 

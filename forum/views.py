@@ -1,17 +1,33 @@
 from django.contrib.auth.decorators import login_required
+from django.core.mail import mail_managers
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from requests import post
+from django.core.mail import EmailMultiAlternatives
+from django.template. loader import render_to_string
+from django.core.mail import send_mail
 
 from .filters import PostFilter
 from .forms import *
 from .models import *
 from django.urls import reverse_lazy
-# from .tasks import send_mails, send_email_week
-# from .serializers import *
+
+
+
+
+@receiver(post_save, sender=Comment)
+def notify_comment(sender, instance, **kwargs):
+    send_mail(
+    subject=f'{instance.post.user.username}, вам пришел новый отклик {instance.date.strftime("%d %m %y")}',
+    message=f"на пост '{instance.post.header}' отклик от {instance.user.username}: {instance.content}",
+    from_email="t1mur.yuldashev@yandex.ru",
+    recipient_list=[instance.post.user.email])
+    print(f' {instance.user.username} {instance.date.strftime("%d %m %Y")}')
 
 @require_POST
 def post_comment(request, post_id):
@@ -25,14 +41,19 @@ def post_comment(request, post_id):
         comment.post = post
         comment.save()
     return render(request,
-                  'post.html',
+                  'comment.html',
                   {'post': post, 'form': form, 'comment': comment})
+
+
 
 
 def handle_uploaded_file(f):
     with open(f"uploads/{f.name}", "wb+") as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+
+
 
 class PostList(ListView):
     # if request.method == "POST":
@@ -106,10 +127,7 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'post_create.html'
     permission_required = ('rest.change_post',)
 
-class PostDelete(LoginRequiredMixin, DeleteView):
-    model = Post
-    template_name = 'post_delete.html'
-    success_url = reverse_lazy('post_list')
+
 
 class CategoryListView(ListView):
     model = Post
@@ -123,4 +141,47 @@ class CategoryListView(ListView):
     #     return queryset
 
 
+class ResponseList(ListView):
+    model = Comment
+    template_name = 'response.html'
+    context_object_name = 'respons'
 
+def post(request):
+    context = {
+        'posts': Post.objects.filter(user=request.user)
+    }
+    return render(request, 'response.html', context)
+def response(request):
+
+    # if Comment.post.user == Post.user:
+    #     return ...
+
+    context = {
+        'responses': Comment.objects.filter(user=request.user)
+    }
+
+    return render(request, 'response.html', context)
+
+def user_posts_comments(request):
+    user = request.user
+    user_posts = Post.objects.filter(user=user)
+    post_comments = {}
+    for post in user_posts:
+        post_comments[post] = post.comments.all()
+    return render(request, 'response.html', {'post_comments': post_comments})
+
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.delete()
+    return redirect('user_posts_comments')
+
+def approve_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user == comment.post.user:
+        comment.active = True
+        comment.save()
+        # Redirect back to the same page after approving the comment
+        return redirect('user_posts_comments')
+    else:
+        # Add error handling or redirect to a different page
+        pass

@@ -1,4 +1,4 @@
-<h2>add a new comment</h2>
+<h2>Оставьте свой отклик</h2>
 <form action="{% url 'post_comment' post.id %}" method="post">
     {{ form.as_p }}
     {% csrf_token %}

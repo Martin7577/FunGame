@@ -1,0 +1,44 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}отклики{% endblock %}
+
+
+{% block content %}
+
+
+{% for post, comments in post_comments.items %}
+
+                        <h2>{{ post.header }}</h2>
+
+                <ul>
+                    {% for comment in comments %}
+
+                            <h6>{{ comment.user }}</h6>
+                            <p>Date: {{ comment.date }}</p>
+                            <p>{{ comment.content }}</p>
+                            <p> --------------</p>
+                    {% if request.user.is_authenticated %}
+                                <form action="{% url 'delete_comment' comment.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">Delete</button>
+                                </form>
+                            {% endif %}
+                            {% if request.user == post.user and not comment.active %}
+                                <form action="{% url 'approve_comment' comment.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">Approve</button>
+                                </form>
+                            {% endif %}
+                    {% empty %}
+                        <li>No comments found for this post.</li>
+                    {% endfor %}
+                </ul>
+
+        {% empty %}
+            <li>No posts found.</li>
+        {% endfor %}
+
+{% endblock %}
+
+

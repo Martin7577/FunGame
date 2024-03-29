@@ -15,7 +15,7 @@ class PostFilter(FilterSet):
         model = Post
         fields = {
             'category',
-            'post_author',
+            'user',
             'header',
             'time_in',
             'text',

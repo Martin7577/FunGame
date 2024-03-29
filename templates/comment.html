@@ -4,8 +4,8 @@
 
 {% block content %}
     {% if comment %}
-        <h2>your comment has been added</h2>
-        <p><a href="{{post.get_absolute_url}}">beck to the post</a> </p>
+        <h2>Ваш отклик отправлен</h2>
+        <p><a href="{{post.get_absolute_url}}">вернуться к посту</a> </p>
     {% else %}
         {% include "comment_form.html" %}
 

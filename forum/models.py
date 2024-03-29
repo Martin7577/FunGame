@@ -8,12 +8,12 @@ from django.utils import timezone
 
 
 
-class Author(models.Model):
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
-    # ratings = models.IntegerField(default = 0)
-
-    def __str__(self):
-        return self.user.username
+# class Author(models.Model):
+#     user = models.OneToOneField(User, on_delete = models.CASCADE)
+#     # ratings = models.IntegerField(default = 0)
+#
+#     def __str__(self):
+#         return self.user.username
 
 
 class Category(models.Model):
@@ -33,11 +33,12 @@ class Post(models.Model):
     publish = models.DateTimeField(default=timezone.now)
     header = models.CharField(max_length=255)
     text = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ManyToManyField(Category, through='PostCategory')
-    post_author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    # post_author = models.ForeignKey(Author, on_delete=models.CASCADE)
     image = models.ImageField(blank=True, upload_to='images', null=True)
     status = models.CharField(max_length=2,
-                              choices=Status.choices, default=Status.DRAFT)
+                              choices=Status.choices, default=Status.PUBLISHED)
 
     class Meta:
         ordering = ['-publish']
@@ -71,7 +72,7 @@ class Comment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
     class Meta:
         ordering = ['date']
         indexes = [

@@ -2,13 +2,22 @@
 
 
 {% block content %}
+
+
 <h2> {{request.user.username}}</h2>
-<a href="posts/">Ко всем постам</a>
 
 <div> Здесь может содержаться персональная информация для каждого пользователя </div>
+
+{% if is_not_authors %}
+<button> <a href="sign/upgrade/"> Стать автором </a> </button>
+{% endif %}
 
 <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <button type="submit">Выйти</button>
 </form>
+
+<p>{{ comment.content }}</p>
+
+
 {% endblock %}
