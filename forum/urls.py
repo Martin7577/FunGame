@@ -3,8 +3,6 @@ from django.urls import path, include
 from . import views
 # Импортируем созданное нами представление
 from .views import (PostList, PostSearch, PostCreate, PostUpdate, CategoryListView,
-                     ResponseList,
-                     # PostDetail
                     )
 from django.views.decorators.cache import cache_page
 
