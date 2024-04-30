@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from requests import post
 from django.core.mail import EmailMultiAlternatives
-from django.template. loader import render_to_string
+from django.template.loader import render_to_string
 from django.core.mail import send_mail
 
 from .filters import PostFilter
@@ -18,16 +18,15 @@ from .models import *
 from django.urls import reverse_lazy
 
 
-
-
 @receiver(post_save, sender=Comment)
 def notify_comment(sender, instance, **kwargs):
     send_mail(
-    subject=f'{instance.post.user.username}, вам пришел новый отклик {instance.date.strftime("%d %m %y")}',
-    message=f"на пост '{instance.post.header}' отклик от {instance.user.username}: {instance.content}",
-    from_email="t1mur.yuldashev@yandex.ru",
-    recipient_list=[instance.post.user.email])
+        subject=f'{instance.post.user.username}, вам пришел новый отклик {instance.date.strftime("%d %m %y")}',
+        message=f"на пост '{instance.post.header}' отклик от {instance.user.username}: {instance.content}",
+        from_email="t1mur.yuldashev@yandex.ru",
+        recipient_list=[instance.post.user.email])
     print(f' {instance.user.username} {instance.date.strftime("%d %m %Y")}')
+
 
 @require_POST
 def post_comment(request, post_id):
@@ -45,13 +44,6 @@ def post_comment(request, post_id):
                   {'post': post, 'form': form, 'comment': comment})
 
 
-
-
-
-
-
-
-
 class PostList(ListView):
     # if request.method == "POST":
     #     handle_uploaded_file(request.FILES["file_upload"])
@@ -67,6 +59,7 @@ class PostList(ListView):
     context_object_name = 'posts'
     paginate_by = 10
 
+
 # class PostDetail(DetailView):
 #     template_name = 'post.html'
 #     context_object_name = 'post'
@@ -78,7 +71,7 @@ def post_detail(request, id):
     form = CommentForm()
     return render(request,
                   'post.html',
-                  {'post': post,'comments': comments, 'form': form})
+                  {'post': post, 'comments': comments, 'form': form})
 
 
 class PostSearch(ListView):
@@ -98,6 +91,7 @@ class PostSearch(ListView):
         context['filterset'] = self.filterset
         return context
 
+
 class PostCreate(LoginRequiredMixin, CreateView):
     # Указываем нашу разработанную форму
     form_class = PostForm
@@ -108,9 +102,6 @@ class PostCreate(LoginRequiredMixin, CreateView):
     permission_required = ('rest.add_post',)
 
 
-
-
-
 class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
@@ -118,11 +109,11 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = ('rest.change_post',)
 
 
-
 class CategoryListView(ListView):
     model = Post
     template_name = 'category_list.html'
     context_object_name = 'category_news_list'
+
 
 def user_posts_comments(request):
     user = request.user
@@ -132,10 +123,12 @@ def user_posts_comments(request):
         post_comments[post] = post.comments.all()
     return render(request, 'response.html', {'post_comments': post_comments})
 
+
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     comment.delete()
     return redirect('user_posts_comments')
+
 
 def approve_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)

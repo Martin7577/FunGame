@@ -6,9 +6,6 @@ from .views import (PostList, PostSearch, PostCreate, PostUpdate, CategoryListVi
                     )
 from django.views.decorators.cache import cache_page
 
-
-
-
 urlpatterns = [
     path('', cache_page(5)(PostList.as_view()), name='post_list'),
     # path('<int:pk>', PostDetail.as_view(), name='post_detail'),
